@@ -756,6 +756,11 @@ main {
 
 /* Responsive Styling */
 @media (max-width: 768px) {
+  .certifications-container {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
   .timeline-list {
     margin-left: 20px;
   }
