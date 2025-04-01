@@ -120,13 +120,28 @@ document.addEventListener("DOMContentLoaded", () => {
 function openLightboxFunc(imageUrl) {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
+  const loadingSpinner = document.querySelector('.loading-spinner');
 
-  // Reset transform when opening
+  // Reset transform and show loading state
   lightboxImg.style.transform = 'scale(1)';
   lightboxImg.style.transformOrigin = 'center center';
+  lightboxImg.classList.remove('loaded');
+  loadingSpinner.style.display = 'block';
 
   // First set the src
   lightboxImg.src = imageUrl;
+
+  // Handle image load
+  lightboxImg.onload = function() {
+    loadingSpinner.style.display = 'none';
+    lightboxImg.classList.add('loaded');
+  };
+
+  // Handle image error
+  lightboxImg.onerror = function() {
+    loadingSpinner.style.display = 'none';
+    console.error('Error loading image:', imageUrl);
+  };
 
   // Then show the dialog
   if (typeof lightbox.showModal === 'function') {
@@ -163,6 +178,8 @@ function closeLightbox() {
     lightbox.style.display = "none";
     lightbox.removeAttribute("open");
   }
+  // Reset zoom
+  updateZoom(1);
 }
 
 // Zoom controls
@@ -174,15 +191,23 @@ const MIN_ZOOM = 1;
 const lightboxImg = document.getElementById('lightbox-img');
 const zoomInBtn = document.querySelector('.zoom-in');
 const zoomOutBtn = document.querySelector('.zoom-out');
+const lightboxContainer = document.querySelector('.lightbox-image-container');
 
 function updateZoom(scale) {
   currentScale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
   lightboxImg.style.transform = `scale(${currentScale})`;
-  lightboxImg.style.transformOrigin = 'center center';
+  lightboxImg.style.transformOrigin = 'top left';
   
   // Update button states
   zoomInBtn.disabled = currentScale >= MAX_ZOOM;
   zoomOutBtn.disabled = currentScale <= MIN_ZOOM;
+
+  // Add or remove zoomed class
+  if (currentScale > 1) {
+    lightboxImg.classList.add('zoomed');
+  } else {
+    lightboxImg.classList.remove('zoomed');
+  }
 }
 
 zoomInBtn.addEventListener('click', () => {

@@ -919,22 +919,43 @@ main {
 }
 #lightbox-img {
   display: block;
-  max-width: 100%;
-  max-height: 80vh;
-  margin: 0 auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
   border-radius: 8px;
   touch-action: none;
-  transform-origin: center center;
-  transition: transform 0.1s ease-out;
+  transform-origin: top left;
+  transition: transform 0.1s ease-out, opacity 0.3s ease;
   will-change: transform;
   -webkit-user-select: none;
   user-select: none;
+  pointer-events: none;
+  opacity: 0;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: contain;
 }
+#lightbox-img.loaded {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .lightbox-zoom {
   transform: scale(1);
+  transform-origin: top left;
+  transition: transform 0.1s ease-out;
 }
-.lightbox-zoom:active {
-  transform: scale(1.5);
+
+.lightbox-zoom.zoomed {
+  transform: scale(2);
+  transform-origin: top left;
+  cursor: grab;
+}
+
+.lightbox-zoom.zoomed:active {
+  cursor: grabbing;
 }
 
 .lightbox-backdrop {
@@ -2052,35 +2073,66 @@ textarea.form-input::-webkit-resizer {
 
 .lightbox-image-container {
   width: 100%;
-  height: 100%;
+  height: 80%;
   display: flex;
   position: relative;
   justify-content: flex-start;
   align-items: flex-start;
-  overflow: hidden;
-  -webkit-overflow-scrolling: touch;
+  overflow: auto;
   cursor: grab;
   padding: 20px;
   box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.9);
+  -webkit-overflow-scrolling: touch;
 }
 
-.lightbox-image-container:active {
-  cursor: grabbing;
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--light-gray-70);
+  border-top: 3px solid var(--orange-yellow-crayola);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 100;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 #lightbox-img {
   display: block;
-  max-width: 100%;
-  max-height: 80vh;
+  max-width: none;
+  max-height: none;
   margin: 0;
   border-radius: 8px;
   touch-action: none;
-  transform-origin: center center;
-  transition: transform 0.1s ease-out;
+  transform-origin: top left;
+  transition: transform 0.1s ease-out, opacity 0.3s ease;
   will-change: transform;
   -webkit-user-select: none;
   user-select: none;
   pointer-events: none;
+  opacity: 0;
+  width: auto;
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: contain;
+}
+
+#lightbox-img.loaded {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .lightbox-content {
@@ -2138,10 +2190,26 @@ textarea.form-input::-webkit-resizer {
     bottom: 15px;
     right: 15px;
   }
-  
+
   .zoom-btn {
     width: 35px;
     height: 35px;
     font-size: 20px;
   }
+}
+
+.lightbox-zoom {
+  transform: scale(1);
+  transform-origin: top left;
+  transition: transform 0.1s ease-out;
+}
+
+.lightbox-zoom.zoomed {
+  transform: scale(2);
+  transform-origin: top left;
+  cursor: grab;
+}
+
+.lightbox-zoom.zoomed:active {
+  cursor: grabbing;
 }
