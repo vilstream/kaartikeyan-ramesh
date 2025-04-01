@@ -116,25 +116,51 @@ document.addEventListener("DOMContentLoaded", () => {
   checkFormValidity();
 });
 
+// Certificate Lightbox
 function openLightboxFunc(imageUrl) {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
 
-  // Check if image loads successfully or fails
-  lightboxImg.onload = () => {
-    console.log("Image loaded successfully:", imageUrl);
-    lightbox.showModal();
-  };
-
-  lightboxImg.onerror = () => {
-    alert("Failed to load the certificate image. Please check the image path: " + imageUrl);
-    console.error("Failed to load image:", imageUrl);
-  };
-
+  // First set the src
   lightboxImg.src = imageUrl;
+
+  // Then show the dialog
+  if (typeof lightbox.showModal === 'function') {
+    lightbox.showModal();
+  } else {
+    // Fallback for browsers that don't support showModal()
+    lightbox.style.display = "block";
+    lightbox.setAttribute("open", "true");
+  }
+}
+// Add event listeners for both click and touch
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', handleCertificateClick);
+  btn.addEventListener('touchstart', handleCertificateClick);
+});
+
+function handleCertificateClick(e) {
+  e.preventDefault();
+  const imageUrl = this.getAttribute('data-image') ||
+    this.parentElement.getAttribute('data-image');
+  openLightboxFunc(imageUrl);
 }
 
+// Close button handling
+document.querySelector('.close-btn').addEventListener('click', closeLightbox);
+document.querySelector('.close-btn').addEventListener('touchstart', closeLightbox);
+document.querySelector('.lightbox-backdrop').addEventListener('click', closeLightbox);
+document.querySelector('.lightbox-backdrop').addEventListener('touchstart', closeLightbox);
 
+function closeLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  if (typeof lightbox.close === 'function') {
+    lightbox.close();
+  } else {
+    lightbox.style.display = "none";
+    lightbox.removeAttribute("open");
+  }
+}
 
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
