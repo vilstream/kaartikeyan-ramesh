@@ -122,69 +122,74 @@ function openLightboxFunc(imageUrl) {
   const lightboxImg = document.getElementById('lightbox-img');
   const loadingSpinner = document.querySelector('.loading-spinner');
 
+  if (!lightbox || !lightboxImg) {
+    console.error('Lightbox elements not found');
+    return;
+  }
+
   // Reset transform and show loading state
   lightboxImg.style.transform = 'scale(1)';
-  lightboxImg.style.transformOrigin = 'top left';
+  lightboxImg.style.transformOrigin = 'center center';
   lightboxImg.classList.remove('loaded');
-  loadingSpinner.style.display = 'block';
+  if (loadingSpinner) {
+    loadingSpinner.style.display = 'block';
+  }
 
   // First set the src
   lightboxImg.src = imageUrl;
 
   // Handle image load
   lightboxImg.onload = function() {
-    loadingSpinner.style.display = 'none';
+    if (loadingSpinner) {
+      loadingSpinner.style.display = 'none';
+    }
     lightboxImg.classList.add('loaded');
+    lightboxImg.style.opacity = '1';
     // Reset any previous transform
     lightboxImg.style.transform = 'scale(1)';
-    lightboxImg.style.transformOrigin = 'top left';
+    lightboxImg.style.transformOrigin = 'center center';
   };
 
   // Handle image error
   lightboxImg.onerror = function() {
-    loadingSpinner.style.display = 'none';
+    if (loadingSpinner) {
+      loadingSpinner.style.display = 'none';
+    }
     console.error('Error loading image:', imageUrl);
   };
 
-  // Then show the dialog
-  if (typeof lightbox.showModal === 'function') {
-    lightbox.showModal();
-  } else {
-    // Fallback for browsers that don't support showModal()
-    lightbox.style.display = "block";
-    lightbox.setAttribute("open", "true");
-  }
+  // Show the dialog
+  lightbox.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
 // Add event listeners for both click and touch
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', handleCertificateClick);
-  btn.addEventListener('touchstart', handleCertificateClick);
+  btn.addEventListener('touchend', handleCertificateClick);
 });
 
 function handleCertificateClick(e) {
   e.preventDefault();
   const imageUrl = this.getAttribute('data-image') ||
     this.parentElement.getAttribute('data-image');
-  openLightboxFunc(imageUrl);
+  if (imageUrl) {
+    openLightboxFunc(imageUrl);
+  }
 }
 
 // Close button handling
 document.querySelector('.close-btn').addEventListener('click', closeLightbox);
-document.querySelector('.close-btn').addEventListener('touchstart', closeLightbox);
-document.querySelector('.lightbox-backdrop').addEventListener('click', closeLightbox);
-document.querySelector('.lightbox-backdrop').addEventListener('touchstart', closeLightbox);
+document.querySelector('.close-btn').addEventListener('touchend', closeLightbox);
 
 function closeLightbox() {
   const lightbox = document.getElementById('lightbox');
-  if (typeof lightbox.close === 'function') {
-    lightbox.close();
-  } else {
-    lightbox.style.display = "none";
-    lightbox.removeAttribute("open");
+  if (lightbox) {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+    // Reset zoom
+    updateZoom(1);
   }
-  // Reset zoom
-  updateZoom(1);
 }
 
 // Zoom controls
@@ -199,13 +204,15 @@ const zoomOutBtn = document.querySelector('.zoom-out');
 const lightboxContainer = document.querySelector('.lightbox-image-container');
 
 function updateZoom(scale) {
+  if (!lightboxImg) return;
+  
   currentScale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
   lightboxImg.style.transform = `scale(${currentScale})`;
-  lightboxImg.style.transformOrigin = 'top left';
+  lightboxImg.style.transformOrigin = 'center center';
   
   // Update button states
-  zoomInBtn.disabled = currentScale >= MAX_ZOOM;
-  zoomOutBtn.disabled = currentScale <= MIN_ZOOM;
+  if (zoomInBtn) zoomInBtn.disabled = currentScale >= MAX_ZOOM;
+  if (zoomOutBtn) zoomOutBtn.disabled = currentScale <= MIN_ZOOM;
 
   // Add or remove zoomed class
   if (currentScale > 1) {
@@ -215,46 +222,68 @@ function updateZoom(scale) {
   }
 }
 
-zoomInBtn.addEventListener('click', () => {
-  updateZoom(currentScale + ZOOM_STEP);
-});
+if (zoomInBtn) {
+  zoomInBtn.addEventListener('click', () => {
+    updateZoom(currentScale + ZOOM_STEP);
+  });
+}
 
-zoomOutBtn.addEventListener('click', () => {
-  updateZoom(currentScale - ZOOM_STEP);
-});
+if (zoomOutBtn) {
+  zoomOutBtn.addEventListener('click', () => {
+    updateZoom(currentScale - ZOOM_STEP);
+  });
+}
 
 // Pinch to zoom functionality
 let initialDistance = 0;
 let isPinching = false;
 
-lightboxImg.addEventListener('touchstart', (e) => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    isPinching = true;
-    initialDistance = Math.hypot(
-      e.touches[0].pageX - e.touches[1].pageX,
-      e.touches[0].pageY - e.touches[1].pageY
-    );
-  }
-}, { passive: false });
+if (lightboxImg) {
+  lightboxImg.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      isPinching = true;
+      initialDistance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+    }
+  }, { passive: false });
 
-lightboxImg.addEventListener('touchmove', (e) => {
-  if (e.touches.length === 2 && isPinching) {
-    e.preventDefault();
-    const currentDistance = Math.hypot(
-      e.touches[0].pageX - e.touches[1].pageX,
-      e.touches[0].pageY - e.touches[1].pageY
-    );
-    
-    const scale = currentDistance / initialDistance;
-    updateZoom(scale);
-  }
-}, { passive: false });
+  lightboxImg.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && isPinching) {
+      e.preventDefault();
+      const currentDistance = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY
+      );
+      
+      const scale = currentDistance / initialDistance;
+      updateZoom(scale);
+    }
+  }, { passive: false });
 
-lightboxImg.addEventListener('touchend', () => {
-  isPinching = false;
-  if (currentScale < 1.5) {
-    updateZoom(1);
+  lightboxImg.addEventListener('touchend', () => {
+    isPinching = false;
+    if (currentScale < 1.5) {
+      updateZoom(1);
+    }
+  });
+}
+
+// Close lightbox when clicking outside the image
+if (lightboxContainer) {
+  lightboxContainer.addEventListener('click', (e) => {
+    if (e.target === lightboxContainer) {
+      closeLightbox();
+    }
+  });
+}
+
+// Close lightbox when pressing Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLightbox();
   }
 });
 

@@ -890,45 +890,19 @@ main {
   cursor: pointer;
 }
 
-/* Lightbox */
-.lightbox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Lightbox Styles */
+#lightbox {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: none;
-}
-
-/* #lightbox[open] {
-  display: flex;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: none;
   justify-content: center;
   align-items: center;
-} */
-
-#lightbox::backdrop {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-#lightbox {
-  padding: 0;
-  margin: auto; /* This explicitly centers the dialog */
-  border: none;
-  background: transparent;
-  max-width: 50vw;
-  max-height: 100vh;
-}
-#lightbox-img {
-  display: block;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  border-radius: 8px;
+  z-index: 1000;
+  padding: 20px;
 }
 
 .lightbox-backdrop {
@@ -937,64 +911,162 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .lightbox-content {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  animation: scaleIn 0.3s ease;
-  overflow: hidden;
   position: relative;
-}
-
-/* Add this for better touch targets on mobile */
-.close-btn {
-  user-select: none;
-  position: absolute;
-  top: 0.5px;
-  right: 0.5px;
-  background: #333;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 20px;
-  cursor: pointer;
+  max-width: 90%;
+  max-height: 90vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
 }
 
+#lightbox-img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform-origin: center center;
+  transition: transform 0.3s ease;
+}
+
+#lightbox-img.loaded {
+  opacity: 1;
+}
+
+.close-btn {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1002;
+  transition: opacity 0.3s ease;
+}
+
+.close-btn:hover {
+  opacity: 0.8;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+  z-index: 1002;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Zoom Controls */
+.zoom-controls {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1002;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.zoom-in,
+.zoom-out {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.zoom-in:hover,
+.zoom-out:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.zoom-in:disabled,
+.zoom-out:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
-  .lightbox-content {
-    max-width: 95vw;
-    max-height: 95vh;
+  .close-btn {
+    top: -30px;
+    right: 0;
+    font-size: 24px;
   }
-  #lightbox {
-    padding: 0;
-    margin: auto; /* This explicitly centers the dialog */
-    border: none;
-    background: transparent;
-    max-width: 95vw;
-    max-height: 95vh;
+
+  .zoom-controls {
+    bottom: 10px;
+    right: 10px;
+    padding: 5px;
+  }
+
+  .zoom-in,
+  .zoom-out {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
   }
 
   #lightbox-img {
     max-height: 85vh;
   }
+}
 
-  .close-btn {
-    user-select: none;
-    top: 0.5px;
-    right: 0.5px;
-    width: 26px;
-    height: 26px;
+/* Touch Device Optimizations */
+@media (hover: none) {
+  .zoom-controls {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .zoom-in:active,
+  .zoom-out:active {
+    background: rgba(255, 255, 255, 0.4);
   }
 }
+
+/* iOS Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+  #lightbox {
+    position: fixed;
+    height: -webkit-fill-available;
+  }
+
+  #lightbox-img {
+    max-height: -webkit-fill-available;
+  }
+}
+
 /*-----------------------------------*\
   #PORTFOLIO
 \*-----------------------------------*/
