@@ -1143,24 +1143,21 @@
 
 
             <div class="certification-card"
-              data-image="assets/images/CertificateOfCompletion_Universal_Principles_of_Design_1.jpg">
+              data-image="assets/images/CertificateOfCompletion_Universal Principles of Design_1.jpg">
               <img src="./assets/images/icon-photo.png" alt="Design Principles" width="40">
               <h4 class="certification-title">Universal Principles of Design</h4>
               <p>LinkedIn Learning</p>
-              <button class="btn">View Certificate</button>
+              <button class="btn"
+                onclick="openLightboxFunc('assets/images/CertificateOfCompletion_Universal Principles of Design_1.jpg')">
+                View Certificate
+              </button>
             </div>
 
+            <!-- Lightbox -->
             <dialog id="lightbox">
               <div class="lightbox-backdrop"></div>
               <div class="lightbox-content">
-                <div class="lightbox-image-container">
-                  <div class="loading-spinner"></div>
-                  <img id="lightbox-img" class="lightbox-zoom" src="" alt="Certificate Preview">
-                  <div class="zoom-controls">
-                    <button class="zoom-btn zoom-in" aria-label="Zoom in">+</button>
-                    <button class="zoom-btn zoom-out" aria-label="Zoom out">-</button>
-                  </div>
-                </div>
+                <img id="lightbox-img" src="" alt="Certificate Preview" crossorigin="anonymous">
                 <button class="close-btn" aria-label="Close certificate view">&times;</button>
               </div>
             </dialog>

@@ -906,6 +906,12 @@ main {
   border: none;
 }
 
+/* #lightbox[open] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
 #lightbox::backdrop {
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -923,39 +929,6 @@ main {
   max-height: none;
   margin: 0;
   border-radius: 8px;
-  touch-action: none;
-  transform-origin: top left;
-  transition: transform 0.1s ease-out, opacity 0.3s ease;
-  will-change: transform;
-  -webkit-user-select: none;
-  user-select: none;
-  pointer-events: none;
-  opacity: 0;
-  width: auto;
-  height: auto;
-  min-width: 100%;
-  min-height: 100%;
-  object-fit: contain;
-}
-#lightbox-img.loaded {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.lightbox-zoom {
-  transform: scale(1);
-  transform-origin: top left;
-  transition: transform 0.1s ease-out;
-}
-
-.lightbox-zoom.zoomed {
-  transform: scale(2);
-  transform-origin: top left;
-  cursor: grab;
-}
-
-.lightbox-zoom.zoomed:active {
-  cursor: grabbing;
 }
 
 .lightbox-backdrop {
