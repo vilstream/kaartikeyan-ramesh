@@ -124,7 +124,7 @@ function openLightboxFunc(imageUrl) {
 
   // Reset transform and show loading state
   lightboxImg.style.transform = 'scale(1)';
-  lightboxImg.style.transformOrigin = 'center center';
+  lightboxImg.style.transformOrigin = 'top left';
   lightboxImg.classList.remove('loaded');
   loadingSpinner.style.display = 'block';
 
@@ -135,6 +135,9 @@ function openLightboxFunc(imageUrl) {
   lightboxImg.onload = function() {
     loadingSpinner.style.display = 'none';
     lightboxImg.classList.add('loaded');
+    // Reset any previous transform
+    lightboxImg.style.transform = 'scale(1)';
+    lightboxImg.style.transformOrigin = 'top left';
   };
 
   // Handle image error
@@ -220,19 +223,21 @@ zoomOutBtn.addEventListener('click', () => {
 
 // Pinch to zoom functionality
 let initialDistance = 0;
+let isPinching = false;
 
 lightboxImg.addEventListener('touchstart', (e) => {
   if (e.touches.length === 2) {
     e.preventDefault();
+    isPinching = true;
     initialDistance = Math.hypot(
       e.touches[0].pageX - e.touches[1].pageX,
       e.touches[0].pageY - e.touches[1].pageY
     );
   }
-});
+}, { passive: false });
 
 lightboxImg.addEventListener('touchmove', (e) => {
-  if (e.touches.length === 2) {
+  if (e.touches.length === 2 && isPinching) {
     e.preventDefault();
     const currentDistance = Math.hypot(
       e.touches[0].pageX - e.touches[1].pageX,
@@ -242,9 +247,10 @@ lightboxImg.addEventListener('touchmove', (e) => {
     const scale = currentDistance / initialDistance;
     updateZoom(scale);
   }
-});
+}, { passive: false });
 
 lightboxImg.addEventListener('touchend', () => {
+  isPinching = false;
   if (currentScale < 1.5) {
     updateZoom(1);
   }

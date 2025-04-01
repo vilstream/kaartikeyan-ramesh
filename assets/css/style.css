@@ -1001,6 +1001,14 @@ main {
     max-width: 95vw;
     max-height: 95vh;
   }
+  #lightbox {
+    padding: 0;
+    margin: auto; /* This explicitly centers the dialog */
+    border: none;
+    background: transparent;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
 
   #lightbox-img {
     max-height: 85vh;
@@ -2085,7 +2093,9 @@ textarea.form-input::-webkit-resizer {
   padding: 20px;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.9);
-  /* -webkit-overflow-scrolling: touch; */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
 }
 
 .loading-spinner {
@@ -2117,13 +2127,13 @@ textarea.form-input::-webkit-resizer {
   max-height: none;
   margin: 0;
   border-radius: 8px;
-  touch-action: none;
+  touch-action: pan-x pan-y;
   transform-origin: top left;
   transition: transform 0.1s ease-out, opacity 0.3s ease;
   will-change: transform;
   -webkit-user-select: none;
   user-select: none;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 0;
   width: auto;
   height: auto;
@@ -2206,12 +2216,14 @@ textarea.form-input::-webkit-resizer {
   transform: scale(1);
   transform-origin: top left;
   transition: transform 0.1s ease-out;
+  touch-action: pan-x pan-y;
 }
 
 .lightbox-zoom.zoomed {
   transform: scale(2);
   transform-origin: top left;
   cursor: grab;
+  touch-action: pan-x pan-y;
 }
 
 .lightbox-zoom.zoomed:active {
