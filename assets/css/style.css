@@ -914,8 +914,8 @@ main {
   margin: auto; /* This explicitly centers the dialog */
   border: none;
   background: transparent;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 50vw;
+  max-height: 100vh;
 }
 #lightbox-img {
   display: block;
@@ -978,6 +978,7 @@ main {
 
 /* Add this for better touch targets on mobile */
 .close-btn {
+  user-select: none;
   position: absolute;
   top: 0.5px;
   right: 0.5px;
@@ -1006,6 +1007,7 @@ main {
   }
 
   .close-btn {
+    user-select: none;
     top: 0.5px;
     right: 0.5px;
     width: 26px;
@@ -2083,7 +2085,7 @@ textarea.form-input::-webkit-resizer {
   padding: 20px;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.9);
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */
 }
 
 .loading-spinner {
@@ -2166,6 +2168,7 @@ textarea.form-input::-webkit-resizer {
 }
 
 .zoom-btn {
+  user-select: none;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -2192,6 +2195,7 @@ textarea.form-input::-webkit-resizer {
   }
 
   .zoom-btn {
+    user-select: none;
     width: 35px;
     height: 35px;
     font-size: 20px;
