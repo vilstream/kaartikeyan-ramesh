@@ -1153,7 +1153,13 @@
             <dialog id="lightbox">
               <div class="lightbox-backdrop"></div>
               <div class="lightbox-content">
-                <img id="lightbox-img" class="lightbox-zoom" src="" alt="Certificate Preview">
+                <div class="lightbox-image-container">
+                  <img id="lightbox-img" class="lightbox-zoom" src="" alt="Certificate Preview">
+                  <div class="zoom-controls">
+                    <button class="zoom-btn zoom-in" aria-label="Zoom in">+</button>
+                    <button class="zoom-btn zoom-out" aria-label="Zoom out">-</button>
+                  </div>
+                </div>
                 <button class="close-btn" aria-label="Close certificate view">&times;</button>
               </div>
             </dialog>

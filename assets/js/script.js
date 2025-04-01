@@ -121,6 +121,10 @@ function openLightboxFunc(imageUrl) {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
 
+  // Reset transform when opening
+  lightboxImg.style.transform = 'scale(1)';
+  lightboxImg.style.transformOrigin = 'center center';
+
   // First set the src
   lightboxImg.src = imageUrl;
 
@@ -133,6 +137,7 @@ function openLightboxFunc(imageUrl) {
     lightbox.setAttribute("open", "true");
   }
 }
+
 // Add event listeners for both click and touch
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('click', handleCertificateClick);
@@ -150,11 +155,6 @@ function handleCertificateClick(e) {
 document.querySelector('.close-btn').addEventListener('click', closeLightbox);
 document.querySelector('.close-btn').addEventListener('touchstart', closeLightbox);
 
-function zoomIn() {
-  const lightbox = document.getElementById('lightbox');
-  lightbox.classList.add('lightbox-zoom');
-}
-
 function closeLightbox() {
   const lightbox = document.getElementById('lightbox');
   if (typeof lightbox.close === 'function') {
@@ -164,6 +164,66 @@ function closeLightbox() {
     lightbox.removeAttribute("open");
   }
 }
+
+// Zoom controls
+let currentScale = 1;
+const ZOOM_STEP = 0.2;
+const MAX_ZOOM = 3;
+const MIN_ZOOM = 1;
+
+const lightboxImg = document.getElementById('lightbox-img');
+const zoomInBtn = document.querySelector('.zoom-in');
+const zoomOutBtn = document.querySelector('.zoom-out');
+
+function updateZoom(scale) {
+  currentScale = Math.min(Math.max(scale, MIN_ZOOM), MAX_ZOOM);
+  lightboxImg.style.transform = `scale(${currentScale})`;
+  lightboxImg.style.transformOrigin = 'center center';
+  
+  // Update button states
+  zoomInBtn.disabled = currentScale >= MAX_ZOOM;
+  zoomOutBtn.disabled = currentScale <= MIN_ZOOM;
+}
+
+zoomInBtn.addEventListener('click', () => {
+  updateZoom(currentScale + ZOOM_STEP);
+});
+
+zoomOutBtn.addEventListener('click', () => {
+  updateZoom(currentScale - ZOOM_STEP);
+});
+
+// Pinch to zoom functionality
+let initialDistance = 0;
+
+lightboxImg.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    initialDistance = Math.hypot(
+      e.touches[0].pageX - e.touches[1].pageX,
+      e.touches[0].pageY - e.touches[1].pageY
+    );
+  }
+});
+
+lightboxImg.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const currentDistance = Math.hypot(
+      e.touches[0].pageX - e.touches[1].pageX,
+      e.touches[0].pageY - e.touches[1].pageY
+    );
+    
+    const scale = currentDistance / initialDistance;
+    updateZoom(scale);
+  }
+});
+
+lightboxImg.addEventListener('touchend', () => {
+  if (currentScale < 1.5) {
+    updateZoom(1);
+  }
+});
 
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
