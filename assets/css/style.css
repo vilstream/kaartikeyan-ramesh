@@ -906,12 +906,6 @@ main {
   border: none;
 }
 
-/* #lightbox[open] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
 #lightbox::backdrop {
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -929,6 +923,14 @@ main {
   max-height: 80vh;
   margin: 0 auto;
   border-radius: 8px;
+  touch-action: none;
+  transform-origin: center center;
+}
+.lightbox-zoom {
+  transform: scale(1);
+}
+.lightbox-zoom:active {
+  transform: scale(1.5);
 }
 
 .lightbox-backdrop {

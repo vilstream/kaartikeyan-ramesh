@@ -149,8 +149,11 @@ function handleCertificateClick(e) {
 // Close button handling
 document.querySelector('.close-btn').addEventListener('click', closeLightbox);
 document.querySelector('.close-btn').addEventListener('touchstart', closeLightbox);
-document.querySelector('.lightbox-backdrop').addEventListener('click', closeLightbox);
-document.querySelector('.lightbox-backdrop').addEventListener('touchstart', closeLightbox);
+
+function zoomIn() {
+  const lightbox = document.getElementById('lightbox');
+  lightbox.classList.add('lightbox-zoom');
+}
 
 function closeLightbox() {
   const lightbox = document.getElementById('lightbox');
